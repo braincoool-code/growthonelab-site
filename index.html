@@ -6,8 +6,9 @@
 <title>그로스원랩 | 성장 컨설팅</title>
 <meta name="description" content="혼자 일하는 사장님부터 해외 진출을 앞둔 기업까지, 회사 상황에 맞춰 원인 진단부터 실행과 성장 로드맵까지 함께하는 성장 컨설팅.">
 <!-- 네이버 서치어드바이저 확인 태그 자리 -->
-<!-- Google 애널리틱스(GA4). 맨 끝 괄호 안의 측정 ID(G-로 시작)만 바꾸면 켜진다. 자리표시(G-XXXXXXXXXX)면 아무것도 보내지 않는다 -->
-<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}(function(id){if(id==='G-XXXXXXXXXX'||!/^G-[A-Z0-9]{6,}$/.test(id))return;var s=document.createElement('script');s.async=true;s.src='https://www.googletagmanager.com/gtag/js?id='+id;document.head.appendChild(s);gtag('js',new Date());gtag('config',id,{send_page_view:false});})('G-NKFCF49B09');</script>
+<!-- Google 애널리틱스(GA4). GA_ID만 바꾸면 된다. 자리표시(G-XXXXXXXXXX)면 아무것도 보내지 않는다.
+     첫 조회는 아래 화면 스크립트가 글 주소(/post/글ID)를 정한 뒤 config로 한 번만 보낸다 -->
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}window.GA_ID='G-NKFCF49B09';(function(id){if(id==='G-XXXXXXXXXX'||!/^G-[A-Z0-9]{6,}$/.test(id))return;var s=document.createElement('script');s.async=true;s.src='https://www.googletagmanager.com/gtag/js?id='+id;document.head.appendChild(s);gtag('js',new Date());})(window.GA_ID);</script>
 <link rel="canonical" href="https://growthonelab.com/">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3E%3Crect width='30' height='30' rx='8' fill='%230B1220'/%3E%3Cpath d='M5 22L10 17L14 20L20 15V6L16.5 9.5' fill='none' stroke='%23E6FF3F' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
 <meta property="og:type" content="website">
@@ -735,8 +736,14 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
     gaView(path,title);
   }
   /* 화면 주소에 붙은 추적 꼬리표(utm_...)를 그대로 넘겨, 어느 채널에서 왔는지 GA4가 알게 한다 */
+  var gaFirst=true;
   function gaView(path,title){
-    try{gtag('event','page_view',{page_title:title,page_location:location.origin+path+location.search});}catch(e){}
+    try{
+      var loc=location.origin+path+location.search;
+      /* 처음 한 번은 config에 글 주소를 실어 보낸다(구글이 자동으로 세는 첫 조회가 이것 하나가 된다). 그다음부터는 화면이 바뀔 때마다 조회를 보낸다 */
+      if(gaFirst){gaFirst=false;gtag('config',window.GA_ID,{page_location:loc,page_title:title});}
+      else{gtag('event','page_view',{page_location:loc,page_title:title});}
+    }catch(e){}
   }
   document.addEventListener('click',function(e){
     var a=e.target.closest('[data-go]'); if(!a) return;
